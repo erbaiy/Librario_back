@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseFilters, UsePipes, ValidationPipe, Param } from '@nestjs/common';
 import { BookService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { BooksExceptionFilter } from '../common/filters/books-exception.filter';
@@ -18,4 +18,12 @@ export class BooksController {
   async findAll() {
     return await this.bookService.findAll();
   }
+
+  
+
+
+  
+
+
+ 
 }
