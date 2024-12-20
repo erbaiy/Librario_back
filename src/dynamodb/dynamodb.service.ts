@@ -59,7 +59,7 @@ export class DynamoDBService implements OnModuleInit {
     key: Record<string, any>,
     updates: Record<string, any>
   ) {
-    const { id, createdAt, ...updateFields } = updates;
+    const { id, createdAt, updatedAt, ...updateFields } = updates; // Exclude updatedAt from spread
     const updateExpressions: string[] = [];
     const expressionAttributeNames: Record<string, string> = {};
     const expressionAttributeValues: Record<string, any> = {};
@@ -70,6 +70,7 @@ export class DynamoDBService implements OnModuleInit {
       expressionAttributeValues[`:value${index}`] = updateFields[field];
     });
   
+    // Add updatedAt explicitly without duplication
     updateExpressions.push('#updatedAt = :updatedAt');
     expressionAttributeNames['#updatedAt'] = 'updatedAt';
     expressionAttributeValues[':updatedAt'] = new Date().toISOString();
@@ -91,6 +92,7 @@ export class DynamoDBService implements OnModuleInit {
       throw new Error(`DynamoDB update operation failed: ${error.message}`);
     }
   }
+  
   
 
   async delete(tableName: string, key: Record<string, any>) {
@@ -120,4 +122,7 @@ export class DynamoDBService implements OnModuleInit {
       throw new Error(`DynamoDB scan operation failed: ${error.message}`);
     }
   }
+
+
+  
 }
