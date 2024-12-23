@@ -2,7 +2,8 @@ import {
   Injectable, 
   InternalServerErrorException, 
   NotFoundException, 
-  BadRequestException 
+  BadRequestException, 
+  Logger
 } from '@nestjs/common';
 import { DynamoDBService } from '../dynamodb/dynamodb.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -155,18 +156,22 @@ export class BookService {
   async searchBooks(query: string): Promise<Book[]> {
     try {
       const books = await this.dynamoDBService.scan(this.tableName);
-      const x= books.filter(book => {
-        return book.title.includes(query) || book.author.includes(query);
+      Logger.log('Books fetched:', books);
+      const filteredBooks = books.filter(book => {
+        return book?.title?.toLowerCase().includes(query.toLowerCase()) || 
+               book?.author?.toLowerCase().includes(query.toLowerCase());
       }) as Book[];
-      console.log(x);
-      return x;
+      Logger.log('Filtered books:', filteredBooks);
+      return filteredBooks;
     } catch (error) {
+      Logger.error(`Failed to search books: ${error.message}`, error.stack);
       throw new InternalServerErrorException(
         `Failed to search books: ${error.message}`,
-        { cause: error }
+        { cause: error },
       );
     }
   }
+  
 
   // borrow a book 
 
