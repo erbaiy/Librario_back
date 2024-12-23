@@ -3,7 +3,7 @@ import { ReservationService } from './reservation.service';
 import { ValidateDynamoDBKeyPipe } from '../common/validate-object-id.pipe';
 
 
-@Controller('reservation')
+@Controller('reservations')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService,
 
@@ -15,10 +15,11 @@ export class ReservationController {
     return this.reservationService.borrow(id);
   }
 
-  // @Post(':id/return')
-  // return(@Param('id', ValidateDynamoDBKeyPipe) id: string) {
-  //   return this.ReservationService.return(id);
-  // }
+  @Post(':id/return')
+  return(@Param('id', ValidateDynamoDBKeyPipe) id: string) {
+    
+    return this.reservationService.return(id);
+  }
 
   // @Delete(':id')
   // remove(@Param('id', ValidateDynamoDBKeyPipe) id: string) {

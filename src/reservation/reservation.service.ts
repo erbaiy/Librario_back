@@ -1,3 +1,6 @@
+
+
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { BookService } from 'src/books/books.service';
 import { DynamoDBService } from 'src/dynamodb/dynamodb.service';
@@ -31,8 +34,22 @@ export class ReservationService {
 
     return reservation;
 
+
 }
+async return(id: string) {
 
-
- 
+    const reservation = await this.dynamoDBService.get('BookReservation', { id });
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found');
+    }
+      await this.bookService.updateBook(reservation.bookId, { available: true });
+  
+    await this.dynamoDBService.delete('BookReservation', { id });
+  
+    return {
+      message: 'Reservation successfully returned',
+      reservation,
+    };
+  }
+  
 }
