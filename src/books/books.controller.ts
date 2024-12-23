@@ -52,5 +52,17 @@ export class BooksController {
     return this.bookService.deleteBook(id);
   }
 
+  // Search books by title or author
+  @Get('search')
+  async searchBooks(@Query('query') query: string): Promise<Book[]> {
+    return this.bookService.searchBooks(query);
+  }
+
+  // borrow a book
+  @Post(':id/borrow')
+  async borrowBook(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.bookService.borrowBook(id);
+  }
+
   
 }

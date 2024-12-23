@@ -8,6 +8,7 @@ import { CategoryModule } from './category/category.module';
 import { CategoryController } from './category/category.controller';
 import { BooksModule } from './books/books.module';
 import { DynamoDBService } from './dynamodb/dynamodb.service';
+import { ReservationModule } from './reservation/reservation.module';
 
 
 
@@ -17,6 +18,7 @@ import { DynamoDBService } from './dynamodb/dynamodb.service';
     DynamoDBModule,
     CategoryModule,
     BooksModule,
+    ReservationModule,
     
 
   ],

@@ -28,6 +28,7 @@ export class BookService {
       const newBook: Book = {
         id: randomUUID(),
         ...bookData,
+        available: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -148,6 +149,58 @@ export class BookService {
     } catch (error) {
       console.error('Error validating category:', error);
       return false;
+    }
+  }
+
+  async searchBooks(query: string): Promise<Book[]> {
+    try {
+      const books = await this.dynamoDBService.scan(this.tableName);
+      const x= books.filter(book => {
+        return book.title.includes(query) || book.author.includes(query);
+      }) as Book[];
+      console.log(x);
+      return x;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to search books: ${error.message}`,
+        { cause: error }
+      );
+    }
+  }
+
+  // borrow a book 
+
+  async borrowBook(id: string): Promise<Book> {
+    try {
+      // Check if book exists
+      const book = await this.getBook(id);
+      if (!book) {
+        throw new NotFoundException(`Book with ID ${id} not found`);
+      }else if(!book.available){
+        throw new BadRequestException('Book is not available for borrowing');
+      }
+
+    
+
+      // Update book availability
+      const updatedBook = await this.dynamoDBService.update(
+        this.tableName,
+        { id },
+        {
+          available: false,
+          updatedAt: new Date().toISOString()
+        }
+      );
+
+      return updatedBook as Book;
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Failed to borrow book: ${error.message}`,
+        { cause: error }
+      );
     }
   }
 }

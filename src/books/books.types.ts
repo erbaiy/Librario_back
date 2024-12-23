@@ -4,8 +4,10 @@ export interface Book {
     title: string;
     author: string;
     category: string;
+    available: boolean;
     publicationYear: number;
     description?: string;
+    
     createdAt: string;
     updatedAt: string;
   }
