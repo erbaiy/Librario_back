@@ -122,7 +122,5 @@ export class DynamoDBService implements OnModuleInit {
       throw new Error(`DynamoDB scan operation failed: ${error.message}`);
     }
   }
-
-
   
 }
