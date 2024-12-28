@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ "admin" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -15,7 +15,8 @@ jobs:
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-      run: echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
+      run: |
+        echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
 
     - name: Build the Docker image
       run: docker build -t $DOCKER_USERNAME/librario_back:latest .
