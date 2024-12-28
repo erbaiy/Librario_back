@@ -2,19 +2,19 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: ['admin']  # Trigger on push to the 'admin' branch
+    branches: ['admin']
   pull_request:
-    branches: ['main']  # Optionally, for pull requests to 'main'
+    branches: ['main']
 
 env:
-  BACKEND_DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/librario_back  # Update to lowercase
+  BACKEND_DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/librario_back
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/admin'  # Trigger on push to 'admin' branch
+    if: github.ref == 'refs/heads/admin'
 
     steps:
       - uses: actions/checkout@v3
@@ -31,8 +31,8 @@ jobs:
       - name: Build and Push Backend Image
         uses: docker/build-push-action@v4
         with:
-          context: ./Librario_back
-          file: ./Librario_back/Dockerfile
+          context: .  # Changed from ./Librario_back to .
+          file: ./Dockerfile  # Changed from ./Librario_back/Dockerfile
           push: true
           tags: |
             ${{ env.BACKEND_DOCKER_IMAGE }}:latest
