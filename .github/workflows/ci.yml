@@ -7,7 +7,7 @@ on:
     branches: ['main']  # Optionally, for pull requests to 'main'
 
 env:
-  BACKEND_DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/Librario_back
+  BACKEND_DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/librario_back  # Update to lowercase
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
