@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: ['admin']
+    branches: ['admin']  # Trigger on push to the 'admin' branch
   pull_request:
-    branches: ['main']
+    branches: ['main']  # Optionally, for pull requests to 'main'
 
 env:
   BACKEND_DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/Librario_back
@@ -14,7 +14,7 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/admin'  # Trigger on push to 'admin' branch
 
     steps:
       - uses: actions/checkout@v3
