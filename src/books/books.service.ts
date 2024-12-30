@@ -10,7 +10,6 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { randomUUID } from 'crypto';
 import { Book } from './books.types';
 
-
 @Injectable()
 export class BookService {
   private readonly tableName = 'Books';
@@ -72,6 +71,8 @@ export class BookService {
 
   async findAll(): Promise<Book[]> {
     try {
+
+      console.log('Table name:', this.tableName)
       const books = await this.dynamoDBService.scan(this.tableName);
       return books as Book[];
     } catch (error) {
@@ -175,37 +176,6 @@ export class BookService {
 
   // borrow a book 
 
-  async borrowBook(id: string): Promise<Book> {
-    try {
-      // Check if book exists
-      const book = await this.getBook(id);
-      if (!book) {
-        throw new NotFoundException(`Book with ID ${id} not found`);
-      }else if(!book.available){
-        throw new BadRequestException('Book is not available for borrowing');
-      }
 
-    
 
-      // Update book availability
-      const updatedBook = await this.dynamoDBService.update(
-        this.tableName,
-        { id },
-        {
-          available: false,
-          updatedAt: new Date().toISOString()
-        }
-      );
-
-      return updatedBook as Book;
-    } catch (error) {
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new InternalServerErrorException(
-        `Failed to borrow book: ${error.message}`,
-        { cause: error }
-      );
-    }
-  }
 }

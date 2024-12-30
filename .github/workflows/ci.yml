@@ -10,6 +10,9 @@ env:
   BACKEND_DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/librario_back
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SSH_HOST: ${{ secrets.SSH_HOST }}
+  SSH_USER: ${{ secrets.SSH_USER }}
 
 jobs:
   build-and-push:
@@ -31,8 +34,8 @@ jobs:
       - name: Build and Push Backend Image
         uses: docker/build-push-action@v4
         with:
-          context: .  # Changed from ./Librario_back to .
-          file: ./Dockerfile  # Changed from ./Librario_back/Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
           tags: |
             ${{ env.BACKEND_DOCKER_IMAGE }}:latest
@@ -40,3 +43,41 @@ jobs:
           build-args: |
             NODE_ENV=production
           no-cache: true
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/admin'
+
+    steps:
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add SSH host to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            # Pull the latest image
+            docker pull ${{ env.BACKEND_DOCKER_IMAGE }}:latest
+            
+            # Stop and remove the existing container if it exists
+            docker stop librario_back || true
+            docker rm librario_back || true
+            
+            # Run the new container
+            docker run -d \
+              --name librario_back \
+              --restart unless-stopped \
+              -p 3000:3000 \
+              -e NODE_ENV=production \
+              ${{ env.BACKEND_DOCKER_IMAGE }}:latest
+            
+            # Clean up old images
+            docker image prune -f
+          "

@@ -9,11 +9,14 @@ import {
   Query,
   ParseUUIDPipe,
   Logger,
+  Request,
 } from '@nestjs/common';
 import { BookService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './books.types';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('books') // Base route: /books
 export class BooksController {
@@ -59,9 +62,5 @@ export class BooksController {
     return this.bookService.deleteBook(id);
   }
 
-  // Borrow a book
-  @Post(':id/borrow')
-  async borrowBook(@Param('id', new ParseUUIDPipe()) id: string): Promise<Book> { 
-    return this.bookService.borrowBook(id);
-  }
+ 
 }

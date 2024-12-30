@@ -1,28 +1,28 @@
-import { Controller, Delete, Param, Post } from '@nestjs/common';
+// reservation.controller.ts
+import { Controller, Param, ParseUUIDPipe, Post, Request, UseGuards } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
-import { ValidateDynamoDBKeyPipe } from '../common/validate-object-id.pipe';
-
+import { AuthGuard } from '@nestjs/passport';
+import { Book } from 'src/books/books.types';
 
 @Controller('reservations')
 export class ReservationController {
-  constructor(private readonly reservationService: ReservationService,
+  constructor(private readonly reservationService: ReservationService) {}
 
-  ) {}
-
- 
+  @UseGuards(AuthGuard('jwt'))
   @Post(':id/borrow')
-  borrow(@Param('id', ValidateDynamoDBKeyPipe) id: string) {
-    return this.reservationService.borrow(id);
+  async borrowBook(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Request() req
+  ): Promise<Book> {
+    console.log('User:', req.user); // Add this to debug
+
+    const cognitoUserId = req.user.sub;
+    return this.reservationService.borrowBook(id, cognitoUserId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post(':id/return')
-  return(@Param('id', ValidateDynamoDBKeyPipe) id: string) {
-    
+  return(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.reservationService.return(id);
   }
-
-  // @Delete(':id')
-  // remove(@Param('id', ValidateDynamoDBKeyPipe) id: string) {
-  //   return this.ReservationService.remove(id);
-  // }
 }

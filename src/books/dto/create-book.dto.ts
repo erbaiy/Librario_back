@@ -3,7 +3,9 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsBoolean
 } from 'class-validator';
+
 export class CreateBookDto {
   @IsString()
   @IsNotEmpty()
@@ -15,7 +17,6 @@ export class CreateBookDto {
 
   @IsString()
   @IsNotEmpty()
-  
   category: string;
 
   @IsNumber()
@@ -26,8 +27,7 @@ export class CreateBookDto {
   @IsOptional()
   description?: string;
 
-  @IsString()
+  @IsBoolean()  // Changed from IsString to IsBoolean
   @IsOptional()
   available: boolean;
-
 }
