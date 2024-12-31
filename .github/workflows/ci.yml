@@ -1,3 +1,6 @@
+
+
+
 name: CI/CD Pipeline
 
 on:
@@ -19,6 +22,7 @@ env:
 
 jobs:
   build-and-push:
+      build-and-push:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/admin'
 
