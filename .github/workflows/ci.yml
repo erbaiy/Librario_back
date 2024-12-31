@@ -13,6 +13,7 @@ env:
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   SSH_HOST: ${{ secrets.SSH_HOST }}
   SSH_USER: ${{ secrets.SSH_USER }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
 
 jobs:
   build-and-push:
@@ -76,6 +77,7 @@ jobs:
               --restart unless-stopped \
               -p 3000:3000 \
               -e NODE_ENV=production \
+              -e AWS_REGION='${{ secrets.AWS_REGION }}' \
               ${{ env.BACKEND_DOCKER_IMAGE }}:latest
             
             # Clean up old images
