@@ -13,6 +13,9 @@ env:
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   SSH_HOST: ${{ secrets.SSH_HOST }}
   SSH_USER: ${{ secrets.SSH_USER }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   build-and-push:
@@ -43,7 +46,6 @@ jobs:
           build-args: |
             NODE_ENV=production
           no-cache: true
-
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -76,6 +78,9 @@ jobs:
               --restart unless-stopped \
               -p 3000:3000 \
               -e NODE_ENV=production \
+              -e AWS_REGION='${{ secrets.AWS_REGION }}' \
+              -e AWS_ACCESS_KEY_ID='${{ secrets.AWS_ACCESS_KEY_ID }}' \
+              -e AWS_SECRET_ACCESS_KEY='${{ secrets.AWS_SECRET_ACCESS_KEY }}' \
               ${{ env.BACKEND_DOCKER_IMAGE }}:latest
             
             # Clean up old images
