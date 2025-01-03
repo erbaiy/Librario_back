@@ -1,5 +1,5 @@
 // reservation.controller.ts
-import { Controller, Param, ParseUUIDPipe, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Request, UseGuards } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Book } from 'src/books/books.types';
@@ -8,19 +8,21 @@ import { Book } from 'src/books/books.types';
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
-  @UseGuards(AuthGuard('jwt'))
-  @Post(':id/borrow')
-  async borrowBook(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Request() req
-  ): Promise<Book> {
-    console.log('User:', req.user); // Add this to debug
 
-    const cognitoUserId = req.user.sub;
-    return this.reservationService.borrowBook(id, cognitoUserId);
-  }
+  // @Get('/borrowed')
+  // getBorrowedBooks() {
+  //   return this.reservationService.getBorrowedBooks();
+  // }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
+  @Post('/borrow')
+async borrowBook(
+  @Body('bookId', new ParseUUIDPipe()) bookId: string,
+  @Body('userId', new ParseUUIDPipe()) userId: string,
+): Promise<Book> {
+  return this.reservationService.borrowBook(bookId, userId);
+}
+  
   @Post(':id/return')
   return(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.reservationService.return(id);

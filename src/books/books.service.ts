@@ -71,10 +71,10 @@ export class BookService {
 
   async findAll(): Promise<Book[]> {
     try {
-
       console.log('Table name:', this.tableName)
       const books = await this.dynamoDBService.scan(this.tableName);
-      return books as Book[];
+      const availableBooks = books.filter(book => book.available) as Book[];
+      return availableBooks;
     } catch (error) {
       throw new InternalServerErrorException(
         `Failed to get books: ${error.message}`,

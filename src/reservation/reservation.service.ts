@@ -14,6 +14,44 @@ export class ReservationService {
     private readonly bookService: BookService,
   ) {}
 
+
+  // async getBorrowedBooks(): Promise<Book[]> {
+  //   try {
+  //     // Scan table for books that are not available (borrowed) and join with reservations
+  //     const borrowedBooks = await this.dynamoDBService.scan(this.BOOKS_TABLE, {
+  //       FilterExpression: 'available = :available',
+  //       ExpressionAttributeValues: {
+  //         ':available': false
+  //       }
+  //     });
+
+  //     if (!borrowedBooks || !Array.isArray(borrowedBooks)) {
+  //       throw new InternalServerErrorException('Invalid response from database');
+  //     }
+
+  //     // Get reservations for borrowed books
+  //     const reservations = await Promise.all(
+  //       borrowedBooks.map(book => 
+  //         this.dynamoDBService.get(this.RESERVATIONS_TABLE, { id: book.id })
+  //       )
+  //     );
+
+  //     // Combine book and reservation data
+  //     const booksWithReservations = borrowedBooks.map((book, index) => ({
+  //       ...book,
+  //       reservation: reservations[index]
+  //     }));
+
+  //     return booksWithReservations as Book[];
+  //   } catch (error) {
+  //     throw new InternalServerErrorException(
+  //       `Failed to get borrowed books: ${error.message}`,
+  //       { cause: error }
+  //     );
+  //   }
+  // }
+  
+
   async borrowBook(bookId: string, cognitoUserId: string): Promise<Book> {
     try {
       // Check if book exists
@@ -74,7 +112,7 @@ export class ReservationService {
     }
   }
 
-  async return(bookId: string): Promise<any> {
+  async   return(bookId: string): Promise<any> {
     try {
       // Check if reservation exists
       const reservation = await this.dynamoDBService.get(this.RESERVATIONS_TABLE, { id: bookId });
