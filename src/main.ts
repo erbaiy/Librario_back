@@ -15,11 +15,13 @@ async function bootstrap() {
   }));
 
   app.enableCors({
-    origin: '*',
-    methods: 'GET,POST,PUT,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type,Authorization',
+    origin: ['http://localhost:5173'], // Allow specific origin
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true, // Allow credentials
+    allowedHeaders: 'Content-Type,Authorization,Accept',
+    exposedHeaders: ['Authorization'],
+    maxAge: 3600,
   });
-  
 
   await app.listen(3000);
 }
