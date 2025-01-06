@@ -14,8 +14,12 @@ async function bootstrap() {
     },
   }));
 
-  app.enableCors();
-
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,POST,PUT,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type,Authorization',
+  });
+  
 
   await app.listen(3000);
 }
